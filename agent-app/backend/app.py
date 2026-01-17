@@ -33,17 +33,26 @@ if resend_api_key:
 st.set_page_config(page_title="Product Decision Agent", page_icon="🛡️")
 
 # --- Constants & Helper Functions ---
-USERS_FILE = "users.csv"
 PROMPT_FILE = "product_decision_agent_prompt.md"
+MAX_SUBMISSIONS_PER_EMAIL = 3
 
-def save_email(email):
-    """Save email to local CSV file."""
-    file_exists = os.path.isfile(USERS_FILE)
-    with open(USERS_FILE, "a", newline="") as f:
-        writer = csv.writer(f)
-        if not file_exists:
-            writer.writerow(["email", "timestamp"])
-        writer.writerow([email, datetime.now().isoformat()])
+class RateLimiter:
+    def __init__(self):
+        self.usage = {}
+
+    def check(self, email):
+        count = self.usage.get(email, 0)
+        return count < MAX_SUBMISSIONS_PER_EMAIL
+
+    def increment(self, email):
+        self.usage[email] = self.usage.get(email, 0) + 1
+
+@st.cache_resource
+def get_rate_limiter():
+    return RateLimiter()
+
+# Initialize Global Rate Limiter
+limiter = get_rate_limiter()
 
 def load_system_prompt():
     """Load the system prompt from file."""
@@ -189,7 +198,12 @@ if not st.session_state.submitted:
     if submitted:
         if not email_input or "@" not in email_input:
             st.error("Please enter a valid email address.")
+        elif not limiter.check(email_input):
+            st.error(f"⚠️ Limit reached. You can only generate {MAX_SUBMISSIONS_PER_EMAIL} reports with this email in the demo.")
         else:
+            # Increment usage immediately
+            limiter.increment(email_input)
+            
             with st.spinner("Analyzing your idea... this may take a moment."):
                 full_context = f"""
 # Product Context
@@ -215,8 +229,7 @@ if not st.session_state.submitted:
                 # 1. Generate Report
                 report = generate_report(full_context)
                 
-                # 2. Save Email (Local + Resend)
-                save_email(email_input)
+                # 2. Save Email (Resend only)
                 save_email_to_resend(email_input)
                 
                 # 3. Send Email
