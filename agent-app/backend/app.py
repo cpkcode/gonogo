@@ -155,9 +155,8 @@ if not st.session_state.submitted:
     """)
     
     with st.form("levers_form"):
-        st.subheader("Contact Info")
-        email_input = st.text_input("Email Address", placeholder="you@example.com")
-        
+
+
         st.subheader("The Basics")
         problem_solution = st.text_area("Problem & Solution", placeholder="What is the problem? How do you solve it?", height=100)
         
@@ -181,6 +180,9 @@ if not st.session_state.submitted:
         
         st.subheader("Documents")
         uploaded_file = st.file_uploader("Upload Pitch Deck or Detailed Notes (PDF)", type=["pdf"])
+        
+        st.subheader("Send The Report To")
+        email_input = st.text_input("Email Address", placeholder="you@example.com")
         
         submitted = st.form_submit_button("Generate Report")
     
