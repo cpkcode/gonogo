@@ -1,3 +1,4 @@
+import html
 import streamlit as st
 import os
 from dotenv import load_dotenv
@@ -120,7 +121,7 @@ def send_email(email, report_content):
             <h2>Your Product Decision Report</h2>
             <p>Here is the analysis of your product idea based on the 9 Levers Framework.</p>
             <pre style="white-space: pre-wrap; font-family: monospace; background: #f4f4f4; padding: 15px; border-radius: 5px;">
-{report_content}
+{html.escape(report_content)}
             </pre>
             <p>Best regards,<br>Product Decision Agent</p>
         </body>
