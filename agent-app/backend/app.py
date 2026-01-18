@@ -79,10 +79,10 @@ def generate_report(context):
 
     try:
         response = client.chat.completions.create(
-            model="gpt-5-mini",
+            model="gpt-5",
             messages=[
                 {"role": "system", "content": system_prompt},
-                {"role": "user", "content": f"Here is my product context for evaluation:\n{context}"}
+                {"role": "user", "content": f"Here is my product context for evaluation:\n{context}\n\n---\nRESPOND WITH ONLY: Decision line, Confidence line, Total Score line, the markdown table with 9 rows, and Dissent line. NO other text. NO explanations. NO recommendations. NO follow-up questions. STOP after Dissent."}
             ]
         )
         return response.choices[0].message.content
