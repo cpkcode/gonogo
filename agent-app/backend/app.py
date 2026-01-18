@@ -76,9 +76,6 @@ def extract_pdf_text(uploaded_file):
 def generate_report(context):
     """Generate the evaluation report using OpenAI."""
     system_prompt = load_system_prompt()
-    
-    # Append instruction to output only the report, no chat.
-    system_prompt += "\n\nIMPORTANT: The user has submitted their full context. Generate the final 'Evaluation Result' report immediately based on the provided inputs. Do not ask for more info. Output strictly in the specified Markdown format. Do not use JSON code blocks, just standard Markdown."
 
     try:
         response = client.chat.completions.create(
