@@ -78,7 +78,7 @@ def generate_report(context):
     system_prompt = load_system_prompt()
     
     # Append instruction to output only the report, no chat.
-    system_prompt += "\n\nIMPORTANT: The user has submitted their full context. Generate the final 'Evaluation Result' report immediately based on the provided inputs. Do not ask for more info. Output in the specified Markdown format."
+    system_prompt += "\n\nIMPORTANT: The user has submitted their full context. Generate the final 'Evaluation Result' report immediately based on the provided inputs. Do not ask for more info. Output strictly in the specified Markdown format. Do not use JSON code blocks, just standard Markdown."
 
     try:
         response = client.chat.completions.create(
@@ -123,25 +123,11 @@ def send_email(email, report_content):
         return False
 
     try:
-        # Convert Markdown report to simple HTML for better readability
-        html_content = f"""
-        <html>
-        <body>
-            <h2>Your Product Decision Report</h2>
-            <p>Here is the analysis of your product idea based on the 9 Levers Framework.</p>
-            <pre style="white-space: pre-wrap; font-family: monospace; background: #f4f4f4; padding: 15px; border-radius: 5px;">
-{html.escape(report_content)}
-            </pre>
-            <p>Best regards,<br>Product Decision Agent</p>
-        </body>
-        </html>
-        """
-        
         r = resend.Emails.send({
             "from": "onboarding@resend.dev",
             "to": email,
             "subject": "Your Product Decision Report 🛡️",
-            "html": html_content
+            "text": report_content
         })
         return True
     except Exception as e:
