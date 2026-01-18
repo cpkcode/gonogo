@@ -234,9 +234,3 @@ else:
         st.session_state.submitted = False
         st.rerun()
 
-# --- Debug Section ---
-with st.sidebar:
-    st.divider()
-    st.caption("DEBUG: Rate Limiter State")
-    st.json(limiter.usage)
-
