@@ -82,7 +82,7 @@ def generate_report(context):
 
     try:
         response = client.chat.completions.create(
-            model="gpt-4o",
+            model="gpt-5-nano",
             messages=[
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": f"Here is my product context for evaluation:\n{context}"}
